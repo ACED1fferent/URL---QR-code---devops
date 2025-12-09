@@ -34,11 +34,12 @@
     }
 
     try {
-      const response = await fetch("http://localhost:8000/qr", {
+      const response = await fetch("http://qr-backend:8000/qr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url })
-      });
+    });
+
 
       if (!response.ok) {
         alert("Backend error: " + response.status);
