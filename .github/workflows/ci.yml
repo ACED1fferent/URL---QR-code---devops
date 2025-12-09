@@ -1,0 +1,33 @@
+name: CI - Build backend image
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: qr-backend:test
+
+      - name: Smoke test container starts
+        run: |
+          docker run -d --rm -p 8000:8000 --name qr-backend qr-backend:test
+          sleep 5
+          curl -f http://localhost:8000/ping
+          docker stop qr-backend
