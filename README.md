@@ -57,6 +57,19 @@ A containerized web application that transforms URLs into QR codes. Built with F
 - Builds images from local Dockerfiles
 - Enables service-to-service communication via service names
 
+## 🧊 Kubernetes Deployment (Minikube)
+
+- Build images inside Minikube:
+  - `minikube start`
+  - `minikube docker-env` (apply the printed command)
+  - `docker build -t qr-backend:latest ./backend`
+  - `docker build -t qr-frontend:latest ./frontend`
+- Apply manifests:
+  - `kubectl apply -f k8s/backend.yaml`
+  - `kubectl apply -f k8s/frontend.yaml`
+- Access frontend:
+  - `minikube service qr-frontend --url`
+
 ## 📦 Prerequisites
 
 - ✅ Docker and Docker Compose installed
