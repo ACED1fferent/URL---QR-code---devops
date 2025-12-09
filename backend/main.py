@@ -31,13 +31,6 @@ class UrlRequest(BaseModel):
 def ping():
     return {"msg": "ok"}
 
-# Proxy endpoint that the browser can call in Minikube
-@app.post("/proxy/qr")
-async def proxy_qr(data: UrlRequest):
-    async with httpx.AsyncClient() as client:
-        resp = await client.post("http://qr-backend:8000/qr", json={"url": data.url})
-    return Response(content=resp.content, media_type="image/png")
-
 @app.post("/qr")
 def generate_qr(data: UrlRequest):
     if not data.url:
@@ -49,3 +42,10 @@ def generate_qr(data: UrlRequest):
     buf.seek(0)
 
     return Response(content=buf.getvalue(), media_type="image/png")
+
+# Proxy endpoint that the browser can call in Minikube
+@app.post("/proxy/qr")
+async def proxy_qr(data: UrlRequest):
+    async with httpx.AsyncClient() as client:
+        resp = await client.post("http://qr-backend:8000/qr", json={"url": data.url})
+    return Response(content=resp.content, media_type="image/png")
