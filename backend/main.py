@@ -13,6 +13,7 @@ origins = [
     "http://127.0.0.1:3000",
     "http://backend:8000/qr",
     "http://localhost:3000/favicon.ico",
+    "http://127.0.0.1:65260",
 ]
 
 app.add_middleware(
