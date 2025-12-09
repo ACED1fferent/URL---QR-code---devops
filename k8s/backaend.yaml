@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qr-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qr-backend
+  template:
+    metadata:
+      labels:
+        app: qr-backend
+    spec:
+      containers:
+        - name: qr-backend
+          image: qr-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qr-backend
+spec:
+  selector:
+    app: qr-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
