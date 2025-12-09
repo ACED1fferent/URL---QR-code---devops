@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Generator</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+    label, input, button { width: 100%; box-sizing: border-box; }
+    input { padding: 8px; margin: 8px 0; }
+    button { padding: 8px; margin-top: 4px; }
+    #qr { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>URL → QR</h1>
+  <label for="url">Enter URL:</label>
+  <input id="url" type="text" placeholder="https://example.com" />
+  <button id="btn">Generate QR</button>
+
+  <div id="qr">
+    <p>No QR generated yet.</p>
+  </div>
+
+  <script>
+  const button = document.getElementById("btn");
+  const input = document.getElementById("url");
+  const qrDiv = document.getElementById("qr");
+
+  button.addEventListener("click", async () => {
+    const url = input.value.trim();
+    if (!url) {
+      alert("Please enter a URL");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/qr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url })
+      });
+
+      if (!response.ok) {
+        alert("Backend error: " + response.status);
+        return;
+      }
+
+      const blob = await response.blob();       // get PNG bytes
+      const imgUrl = URL.createObjectURL(blob); // make a local URL
+
+      qrDiv.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = imgUrl;
+      img.alt = "QR code";
+      qrDiv.appendChild(img);
+    } catch (err) {
+      console.error(err);
+      alert("Request failed. Is the backend running?");
+    }
+    });
+    </script>
+
+</body>
+</html>
