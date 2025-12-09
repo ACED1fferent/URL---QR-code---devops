@@ -4,6 +4,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 import qrcode
 from io import BytesIO
+import httpx
 
 app = FastAPI()
 
@@ -25,10 +26,17 @@ app.add_middleware(
 class UrlRequest(BaseModel):
     url: str
 
+# Health check endpoint
 @app.get("/ping")
 def ping():
     return {"msg": "ok"}
 
+# Proxy endpoint that the browser can call in Minikube
+@app.post("/proxy/qr")
+async def proxy_qr(data: UrlRequest):
+    async with httpx.AsyncClient() as client:
+        resp = await client.post("http://qr-backend:8000/qr", json={"url": data.url})
+    return Response(content=resp.content, media_type="image/png")
 
 @app.post("/qr")
 def generate_qr(data: UrlRequest):
